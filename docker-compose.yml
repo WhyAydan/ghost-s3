@@ -1,0 +1,38 @@
+volumes:
+  db:
+  ghost:
+
+services:
+  ghost:
+    ports:
+      - 2368:2368
+    networks:
+      - ghost
+    restart: always
+    environment:
+      database__client: mysql
+      database__connection__host: db
+      database__connection__user: ghost
+      database__connection__password: password1
+      database__connection__database: ghost
+      storage__active: s3
+      storage__s3__accessKeyId: <AWS Access Key>
+      storage__s3__secretAccessKey: <AWS Secret Key>
+      storage__s3__region: us-east-1
+      storage__s3__bucket: <s3 bucket name>
+
+  db:
+    image: linuxserver/mariadb:latest
+    volumes:
+      - db:/config
+    networks:
+      - ghost
+    environment:
+      MYSQL_ROOT_USER: root
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: ghost
+      MYSQL_PASSWORD: password1
+      MYSQL_DATABASE: ghost
+
+networks:
+  ghost:
